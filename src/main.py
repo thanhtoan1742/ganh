@@ -1,4 +1,4 @@
 from game import *
 
 g = game()
-print(g.board)
+g.run(verbose=1)
