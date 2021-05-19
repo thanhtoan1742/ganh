@@ -7,7 +7,7 @@ A 2 player game.
 ### Board
 
 4*4 squares with 25 intersection.
-![intial posisiton](ganh_initial.jpg)
+![intial posisiton](docs/ganh_initial.jpg)
 
 ### Piece
 

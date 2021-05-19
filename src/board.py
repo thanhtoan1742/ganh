@@ -1,6 +1,6 @@
 import numpy as np
 
-class Ganh:
+class board:
     def __init__(self):
         self.board = np.array([
             [ 1,  1,  1,  1,  1],
@@ -9,15 +9,7 @@ class Ganh:
             [-1,  0,  0,  0, -1],
             [-1, -1, -1, -1, -1],
         ])
-
+        self.first_player_turn = True
 
     def __str__(self):
         return str(self.board)
-
-    def print(self):
-        print(str(self))
-
-
-if __name__ == '__main__':
-    ganh = Ganh()
-    print(ganh)
