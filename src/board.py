@@ -45,17 +45,15 @@ class board:
     def get_board(self):
         return self.board
 
-    def finished(self):
-        n_first_player_pieces = sum(self.board.flatten() == 1)
-        n_second_player_pieces = sum(self.board.flatten() == -1)
-        return n_first_player_pieces == 0 or n_second_player_pieces == 0
-
     def get_winner(self):
         if sum(self.board.flatten() == 1) == 0:
             return -1
         if sum(self.board.flatten() == -1) == 0:
             return 1
         return 0
+
+    def finished(self):
+        return self.get_winner() != 0
             
     def _in_range_(self, x, y):
         return x >= 0 and y >= 0 and x < 5 and y < 5
@@ -71,6 +69,7 @@ class board:
                 yield u, v
 
     def _neighbor_pair_(self, x, y):
+        res = []
         for i in range(4):
             ax = x + board.dx[i]
             ay = y + board.dy[i]
@@ -82,17 +81,21 @@ class board:
             if not self._in_range_(bx, by):
                 continue
 
-            yield ax, ay, bx, by
+            res.append((ax, ay, bx, by))
+        return res
 
     def _carry_neighbor_pair_(self, x, y):
+        res = []
         for ax, ay, bx, by in self._neighbor_pair_(x, y):
             if self.board[ax][ay] != self.board[bx][by]:
                 continue
             if self.board[ax][ay] != 0 - self.current_player:
                 continue
-            yield ax, ay, bx, by
+            res.append((ax, ay, bx, by))
+        return res
 
     def _open_moves_(self):
+        res = []
         for x in range(5):
             for y in range(5):
                 if self.board[x][y] != self.current_player:
@@ -102,8 +105,9 @@ class board:
                     if self.board[u][v] != 0:
                         continue
 
-                    if len(list(self._carry_neighbor_pair_(u, v))) > 0:
-                        yield (x, y), (u, v)
+                    if len(self._carry_neighbor_pair_(u, v)) > 0:
+                        res.append(((x, y), (u, v)))
+        return res
 
     def _check_carry_(self, x, y):
         for ax, ay, bx, by in self._carry_neighbor_pair_(x, y):
