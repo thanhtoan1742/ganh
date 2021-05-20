@@ -67,7 +67,7 @@ class board:
     #   3 0 1
     #   2   2
     #   1 0 3
-    def _carry_neighbor_pair_(self, x, y):
+    def _neighbor_pair_(self, x, y):
         for i in range(4):
             ax = x + board.dx[i]
             ay = y + board.dy[i]
@@ -79,6 +79,14 @@ class board:
             if not self._in_range_(bx, by):
                 continue
 
+            yield ax, ay, bx, by
+
+    def _carry_neighbor_pair_(self, x, y):
+        for ax, ay, bx, by in self._neighbor_pair_(x, y):
+            if self.board[ax][ay] != self.board[bx][by]:
+                continue
+            if self.board[ax][ay] != 0 - self.current_player:
+                continue
             yield ax, ay, bx, by
 
 
@@ -95,11 +103,6 @@ class board:
 
     def _check_carry_(self, x, y):
         for ax, ay, bx, by in self._carry_neighbor_pair_(x, y):
-            if self.board[ax][ay] != self.board[bx][by]:
-                continue
-            if self.board[ax][ay] != 0 - self.board[x][y]:
-                continue
-
             self.board[ax][ay] = self.board[x][y]
             self.board[bx][by] = self.board[x][y]
 
@@ -131,17 +134,34 @@ class board:
                 if reachable_empty[self.connected_component[x][y]] == 0:
                     self.board[x][y] = 0 - self.board[x][y]
 
+    def _open_moves_(self):
+        for x in range(5):
+            for y in range(5):
+                if self.board[x][y] != self.current_player:
+                    continue
 
-    # TODO: check for open and force the open move.
+                for u, v in self._neighbor_(x, y):
+                    if self.board[u][v] != 0:
+                        continue
+
+                    if len(list(self._carry_neighbor_pair_(u, v))) > 0:
+                        yield (x, y), (u, v)
+
+
     def make_move(self, move):
         (sx, sy), (tx, ty) = move
-        print(sx, sy, tx, ty)
+        print(f'move from ({sx}, {sy}) to ({tx}, {ty})')
         if self.board[sx][sy] != self.current_player:
             raise KeyError('player in starting position does not match current player')
         if self.board[tx][ty] != 0:
             raise KeyError('destination is not empty')
         if not (tx, ty) in self._neighbor_(sx, sy):
             raise KeyError('destination is not reachable from starting position')
+
+        open_moves = list(self._open_moves_())
+        if len(open_moves) > 0 and not (move in open_moves):
+            raise KeyError('player has to play open move')
+
 
         self.board[sx][sy] = 0
         self.board[tx][ty] = self.current_player
