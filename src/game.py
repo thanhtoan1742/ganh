@@ -16,16 +16,17 @@ class game:
         current_move_maker = self.first_move_maker
         next_move_maker = self.second_move_maker
         while 1:
+            if verbose > 0:
+                self.board.pretty_print()
             if self.board.finished():
                 break
 
-            if verbose > 0:
-                self.board.pretty_print()
             move = current_move_maker(self.board.get_board(), self.board.get_current_player())
             self.board.make_move(move)
             self.moves.append(move)
 
             current_move_maker, next_move_maker = next_move_maker, current_move_maker
 
-        winner = self.board().get_winner()
-        print(f'player {winner} won!!!')
+        winner = self.board.get_winner()
+        c_winner = 'X' if winner == 1 else 'O'
+        print(f'{c_winner}({winner}) won!!!')

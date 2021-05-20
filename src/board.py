@@ -103,6 +103,35 @@ class board:
             self.board[ax][ay] = self.board[x][y]
             self.board[bx][by] = self.board[x][y]
 
+    def DFS(self, x, y):
+        self.connected_component[x][y] = self.n_connected_component
+        for u, v in self._neighbor_(x, y):
+            if self.connected_component[u][v] != 0:
+                continue
+            if self.board[u][v] == 0:
+                self.n_reachable_empty += 1
+            if self.board[u][v] == self.board[x][y]:
+                self.DFS(u, v)
+
+    def _check_surround_(self):
+        self.connected_component = [[0 for y in range(5)] for x in range(5)]
+        self.n_connected_component = 0
+        reachable_empty = [-1]
+        for x in range(5):
+            for y in range(5):
+                if self.connected_component[x][y] != 0 or self.board[x][y] == 0:
+                    continue
+                self.n_reachable_empty = 0
+                self.n_connected_component += 1
+                self.DFS(x, y)
+                reachable_empty.append(self.n_reachable_empty)
+
+        for x in range(5):
+            for y in range(5):
+                if reachable_empty[self.connected_component[x][y]] == 0:
+                    self.board[x][y] = 0 - self.board[x][y]
+
+
     # TODO: check for open and force the open move.
     def make_move(self, move):
         (sx, sy), (tx, ty) = move
@@ -118,5 +147,6 @@ class board:
         self.board[tx][ty] = self.current_player
 
         self._check_carry_(tx, ty)
+        self._check_surround_()
 
         self.current_player = 0 - self.current_player
