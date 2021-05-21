@@ -7,7 +7,7 @@ A 2 player game.
 ### Board
 
 4*4 squares with 25 intersection.
-![intial posisiton](docs/ganh_initial.jpg)
+![initial position](docs/ganh_initial.jpg)
 
 ### Piece
 
@@ -16,16 +16,21 @@ The initial position is the layed out as above.
 
 ### Move
 
-A piece can move along the edges speicified on the board to an empty itersection.
+A piece can move along the edges specified on the board to an empty
+intersection.
 
 #### Carry
 
-A piece move into an intersection between 2 opponent's pieces and  form a line with those 2 pieces -> turn those 2 pieces to yours.
+A piece move into an intersection between 2 opponent's pieces and form a line
+with those 2 pieces -> turn those 2 pieces to yours.
 
 #### Surround
 
-Surround the opponent's pieces in a way that they can't be moved -> turn those pieces to yours.
+Surround the opponent's pieces in a way that they can't be moved -> turn those
+pieces to yours.
 
 #### Open
 
-If your move gives the opponent an oppotunity to carry, your opponent has to carry
+If you moves your piece and the opponent has a chance to carry by moving to
+initial position of the piece you moved, your opponent has to carry by moving
+their piece to that position.
