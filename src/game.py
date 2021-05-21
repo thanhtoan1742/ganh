@@ -10,7 +10,6 @@ class game:
         self.board = board
         self.first_move_maker = first_move_maker
         self.second_move_maker = second_move_maker
-        self.moves = []
 
     def run(self, verbose=0):
         current_move_maker = self.first_move_maker
@@ -23,7 +22,6 @@ class game:
 
             move = current_move_maker(self.board.get_board(), self.board.get_current_player())
             self.board.make_move(move)
-            self.moves.append(move)
 
             current_move_maker, next_move_maker = next_move_maker, current_move_maker
 
