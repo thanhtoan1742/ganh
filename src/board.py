@@ -79,7 +79,9 @@ class board:
             if self._in_range_(u, v):
                 yield u, v
 
-
+    '''
+        Return all of opposite pair of spot available
+    '''
     def _neighbor_pair_(self, x, y):
         res = []
         for i in range(4):
@@ -99,6 +101,9 @@ class board:
         return res
 
 
+    '''
+        Return all of opposite pair of enenmy to be carried
+    '''
     def _carry_neighbor_pair_(self, x, y):
         res = []
         for ax, ay, bx, by in self._neighbor_pair_(x, y):
@@ -109,7 +114,9 @@ class board:
             res.append((ax, ay, bx, by))
         return res
 
-
+    '''
+        
+    '''
     def _check_open_move_(self, sx, sy, tx, ty):
         if len(self.moves) == 0:
             return True
@@ -129,7 +136,9 @@ class board:
 
         return ((sx, sy) in possible_starting_position) and (u == tx) and (v == ty)
 
-
+    '''
+        Get opposite pairs of enenmy to be carried, flip into friendly unit
+    '''
     def _check_carry_(self, x, y):
         for ax, ay, bx, by in self._carry_neighbor_pair_(x, y):
             self.board[ax][ay] = self.board[x][y]
@@ -146,7 +155,9 @@ class board:
             if self.board[u][v] == self.board[x][y]:
                 self._DFS_(u, v)
 
-
+    '''
+        Check all surrounded enemy node, flip all of surrounded inside enemy node
+    '''
     def _check_surround_(self):
         self.connected_component = [[0 for y in range(5)] for x in range(5)]
         self.n_connected_component = 0
@@ -160,12 +171,14 @@ class board:
                 self._DFS_(x, y)
                 reachable_empty.append(self.n_reachable_empty)
 
-
         for x in range(5):
             for y in range(5):
                 if reachable_empty[self.connected_component[x][y]] == 0:
                     self.board[x][y] = 0 - self.board[x][y]
 
+    '''
+        Check to validate move, then make change to the board, both moves then carry/surround
+    '''
     def make_move(self, move):
         (sx, sy), (tx, ty) = move
         # print(f'move from ({sx}, {sy}) to ({tx}, {ty})')
@@ -178,7 +191,7 @@ class board:
             raise Exception('destination is not reachable from starting position')
 
         if not self._check_open_move_(sx, sy, tx, ty):
-            raise Exception('player has play open move')
+            raise Exception('player has to play open move')
 
         self.board[sx][sy] = 0
         self.board[tx][ty] = self.current_player
