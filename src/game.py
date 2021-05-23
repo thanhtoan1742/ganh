@@ -3,9 +3,6 @@ from board import *
 from random_player import move as random_move_maker_1
 from random_player_clone import move as random_move_maker_2
 
-# class game:
-#   - run the main game loop.
-#   - let the player interact with ganh.
 class game:
     def __init__(self, board=board(), first_move_maker=random_move_maker_1, second_move_maker=random_move_maker_2):
         self.board = board

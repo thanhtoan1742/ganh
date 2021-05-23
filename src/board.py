@@ -127,13 +127,6 @@ class board:
             return True
 
 
-        print('------------DEBUG----board-check-open-move----------------')
-        self.pretty_print()
-        print('possible open move: from')
-        print(possible_starting_position)
-        print(f'to ({u}, {v})')
-        print('------------DEBUG----board-check-open-move----------------')
-
         return ((sx, sy) in possible_starting_position) and (u == tx) and (v == ty)
 
 
@@ -175,7 +168,7 @@ class board:
 
     def make_move(self, move):
         (sx, sy), (tx, ty) = move
-        print(f'move from ({sx}, {sy}) to ({tx}, {ty})')
+        # print(f'move from ({sx}, {sy}) to ({tx}, {ty})')
 
         if self.board[sx][sy] != self.current_player:
             raise Exception('player in starting position does not match current player')
