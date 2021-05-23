@@ -110,7 +110,7 @@ class board:
         return res
 
 
-    def _check_open_move_(self, x, y):
+    def _check_open_move_(self, sx, sy, tx, ty):
         if len(self.moves) == 0:
             return True
 
@@ -118,7 +118,23 @@ class board:
         if len(self._carry_neighbor_pair_(u, v)) == 0:
             return True
 
-        return (u == x) and (v == y)
+        possible_starting_position = [
+            (a, b)
+            for a, b in self._neighbor_(u, v)
+            if self.board[a][b] == self.get_current_player()
+        ]
+        if len(possible_starting_position) == 0:
+            return True
+
+
+        print('------------DEBUG----board-check-open-move----------------')
+        self.pretty_print()
+        print('possible open move: from')
+        print(possible_starting_position)
+        print(f'to ({u}, {v})')
+        print('------------DEBUG----board-check-open-move----------------')
+
+        return ((sx, sy) in possible_starting_position) and (u == tx) and (v == ty)
 
 
     def _check_carry_(self, x, y):
@@ -168,7 +184,7 @@ class board:
         if not (tx, ty) in self._neighbor_(sx, sy):
             raise Exception('destination is not reachable from starting position')
 
-        if not self._check_open_move_(tx, ty):
+        if not self._check_open_move_(sx, sy, tx, ty):
             raise Exception('player has play open move')
 
         self.board[sx][sy] = 0
