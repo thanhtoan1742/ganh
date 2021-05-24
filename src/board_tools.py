@@ -1,3 +1,11 @@
+from __future__ import print_function
+import sys
+import numpy as np
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 N_ROW = 5
 N_COL = 5
 
@@ -83,4 +91,63 @@ def get_position_with_value(board, value):
             
             pos.append((x, y))
     return pos
+
+
+def _DFS_(board, x, y, mask, ncc):
+    mask[x][y] = ncc
+    for u, v in get_neighbor_with_value(board, x, y, board[x][y]):
+        if mask[u][v] == 0:
+            _DFS_(board, u, v, mask, ncc)
+
+
+def get_connected_component_mask(board):
+    mask = np.zeros((N_ROW, N_COL), dtype=int)
+    ncc = 0
+    for x in range(N_ROW):
+        for y in range(N_COL):
+            if mask[x][y] == 0:
+                ncc += 1
+                _DFS_(board, x, y, mask, ncc)
+
+    return mask
+    
+
+
+
+def get_initial_board():
+    return np.array([
+        [ 1,  1,  1,  1,  1],
+        [ 1,  0,  0,  0,  1],
+        [ 1,  0,  0,  0, -1],
+        [-1,  0,  0,  0, -1],
+        [-1, -1, -1, -1, -1],
+    ])
+
+
+def is_initial_board(board):
+    return (board == get_initial_board()).all()
+
+
+def get_pretty_string(board):
+    lines = [
+        '---'.join([
+            'X' if cell == 1 else 'O' if cell == -1 else '.'
+                for cell in row
+        ])
+        for row in board
+    ]
+    s = '\n'.join([
+        '   0   1   2   3   4',
+        '0  ' + lines[0], 
+        '   | \ | / | \ | / |',
+        '1  ' + lines[1],
+        '   | / | \ | / | \ |',
+        '2  ' + lines[2], 
+        '   | \ | / | \ | / |',
+        '3  ' + lines[3],
+        '   | / | \ | / | \ |',
+        '4  ' + lines[4]
+    ])
+    return s
+
 

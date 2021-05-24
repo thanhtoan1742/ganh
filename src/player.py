@@ -1,11 +1,7 @@
-from __future__ import print_function
-import sys
 import numpy as np
 from random import choice
 import board_tools as bt
-
-def eprint(*args, **kwargs):
-    print(*args, file=sys.stderr, **kwargs)
+from board_tools import eprint
 
 """
 This class is currently designed so that the player does not change side.
@@ -65,20 +61,6 @@ class player:
         return x, y, u, v
 
 
-    def _get_initial_board_(self):
-        return np.array([
-            [ 1,  1,  1,  1,  1],
-            [ 1,  0,  0,  0,  1],
-            [ 1,  0,  0,  0, -1],
-            [-1,  0,  0,  0, -1],
-            [-1, -1, -1, -1, -1],
-        ])
-
-
-    def _is_initial_board_(self):
-        initial_board = self._get_initial_board_()
-        return (initial_board == self.board).all()
-
         
     """
     If we are playing a new game then reset moves list and add the opponent
@@ -91,9 +73,9 @@ class player:
             self.moves = []
             # If we play the first turn the do nothing.
             # Else we set last_board to initial board
-            if self._is_initial_board_():
+            if bt.is_initial_board(self.board):
                 return
-            self.last_board = self._get_initial_board_()
+            self.last_board = bt.get_initial_board()
 
         opponent_move = self._extract_opponent_move_()
         self.moves.append(opponent_move)

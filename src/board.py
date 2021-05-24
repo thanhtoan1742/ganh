@@ -1,48 +1,21 @@
 import numpy as np
 import board_tools as bt
+from board_tools import eprint
 
 
 class board:
-    def __init__(self):
-        self.board = np.array([
-            [ 1,  1,  1,  1,  1],
-            [ 1,  0,  0,  0,  1],
-            [ 1,  0,  0,  0, -1],
-            [-1,  0,  0,  0, -1],
-            [-1, -1, -1, -1, -1],
-        ])
-        self.current_player = 1
+    def __init__(self, board=bt.get_initial_board(), current_player=1):
+        self.board = board
+        self.current_player = current_player
         self.moves = []
 
 
     def __str__(self):
-        return str(self.board)
+        return bt.get_pretty_string(self.board)
 
-
-    def pretty_str(self):
-        lines = [
-            '---'.join([
-                'X' if cell == 1 else 'O' if cell == -1 else '.'
-                 for cell in row
-            ])
-            for row in self.board
-        ]
-        s = '\n'.join([
-            '   0   1   2   3   4',
-            '0  ' + lines[0], 
-            '   | \ | / | \ | / |',
-            '1  ' + lines[1],
-            '   | / | \ | / | \ |',
-            '2  ' + lines[2], 
-            '   | \ | / | \ | / |',
-            '3  ' + lines[3],
-            '   | / | \ | / | \ |',
-            '4  ' + lines[4]
-        ])
-        return s
 
     def pretty_print(self):
-        print(self.pretty_str())
+        print(bt.get_pretty_string(self.board))
 
 
     def get_current_player(self):
@@ -65,10 +38,6 @@ class board:
         return self.get_winner() != 0
  
 
-    """
-    An open move is:
-
-    """
     def _check_open_move_(self, sx, sy, tx, ty):
         if len(self.moves) == 0:
             return True
@@ -85,45 +54,35 @@ class board:
 
 
     '''
-    Get opposite pairs of enenmy to be carried, flip into friendly unit
+    Get opposite pairs of opponent's pieces to be carried, flip into friendly pieces.
     '''
-    def _check_carry_(self, x, y):
+    def _update_carry_(self, x, y):
         for ax, ay, bx, by in bt.get_symmetric_neighbor_pair_with_value(self.board, x, y, 0 - self.current_player):
             self.board[ax][ay] = self.board[x][y]
             self.board[bx][by] = self.board[x][y]
 
 
-    def _DFS_(self, x, y):
-        self.connected_component[x][y] = self.n_connected_component
-        for u, v in bt.get_neighbor(x, y):
-            if self.connected_component[u][v] != 0:
-                continue
-            if self.board[u][v] == 0:
-                self.n_reachable_empty += 1
-            if self.board[u][v] == self.board[x][y]:
-                self._DFS_(u, v)
-
 
     '''
-    Check all surrounded enemy node, flip all of surrounded inside enemy node
+    Check all surrounded oppoent's node, flip all of surrounded inside enemy node
     '''
-    def _check_surround_(self):
-        self.connected_component = [[0 for y in range(5)] for x in range(5)]
-        self.n_connected_component = 0
-        reachable_empty = [-1]
-        for x in range(5):
-            for y in range(5):
-                if self.connected_component[x][y] != 0 or self.board[x][y] == 0:
+    def _update_surround_(self):
+        mask = bt.get_connected_component_mask(self.board)
+        ncc = max(mask.flatten()) + 1
+
+        is_reachable_empties = np.zeros(ncc, dtype=bool)
+        for x in range(bt.N_ROW):
+            for y in range(bt.N_COL):
+                if len(bt.get_neighbor_with_value(self.board, x, y, 0)) > 0:
+                    is_reachable_empties[mask[x][y]] = 1
+
+        for x in range(bt.N_ROW):
+            for y in range(bt.N_COL):
+                if self.board[x][y] != 0 - self.current_player:
                     continue
-                self.n_reachable_empty = 0
-                self.n_connected_component += 1
-                self._DFS_(x, y)
-                reachable_empty.append(self.n_reachable_empty)
 
-        for x in range(5):
-            for y in range(5):
-                if reachable_empty[self.connected_component[x][y]] == 0:
-                    self.board[x][y] = 0 - self.board[x][y]
+                if not is_reachable_empties[mask[x][y]]:
+                    self.board[x][y] = self.current_player
 
 
     '''
@@ -146,7 +105,7 @@ class board:
         self.board[tx][ty] = self.current_player
         self.moves.append(move)
 
-        self._check_carry_(tx, ty)
-        self._check_surround_()
+        self._update_carry_(tx, ty)
+        self._update_surround_()
 
         self.current_player = 0 - self.current_player
