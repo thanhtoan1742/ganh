@@ -14,12 +14,12 @@ class game:
         while 1:
             if verbose > 0:
                 self.board.pretty_print()
-            if self.board.finished():
+            if self.board.is_finished():
                 break
 
             c_player = 'X' if self.board.get_current_player() == 1 else 'O'
             move = current_move_maker(self.board.get_board(), self.board.get_current_player())
-            print(f"Player {c_player} moves: {move}")
+            print(f"Player {c_player} moves from ({move[0][0]}, {move[0][1]}) to ({move[1][0]}, {move[1][1]})")
             self.board.make_move(move)
 
             current_move_maker, next_move_maker = next_move_maker, current_move_maker
