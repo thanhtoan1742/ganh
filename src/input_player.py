@@ -1,8 +1,18 @@
-from random_player_for_input_player import get_open_moves
+from player import player
 
+class input_player(player):
+    def _get_move_(self):
+        open_moves = self.get_open_moves()
+        print('open moves are:')
+        print(open_moves)
+
+        x, y, u, v = [int(e) for e in input().strip().split()]
+        return x, y, u, v
+
+        
+
+
+
+p = input_player()
 def move(board, player):
-    ss = get_open_moves(board, player)
-    print('your open moves are: ')
-    print(ss)
-    x, y, u, v, = [int(e) for e in input().strip().split()]
-    return (x, y), (u, v)
+    return p.move(board, player)

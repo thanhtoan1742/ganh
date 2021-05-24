@@ -22,7 +22,7 @@ class board:
         return str(self.board)
 
 
-    def pretty_print(self):
+    def pretty_str(self):
         lines = [
             '---'.join([
                 'X' if cell == 1 else 'O' if cell == -1 else '.'
@@ -42,7 +42,10 @@ class board:
             '   | / | \ | / | \ |',
             '4  ' + lines[4]
         ])
-        print(s, end='\n\n')
+        return s
+
+    def pretty_print(self):
+        print(self.pretty_str())
 
 
     def get_current_player(self):
@@ -80,7 +83,7 @@ class board:
                 yield u, v
 
     '''
-        Return all of opposite pair of spot available
+    Return all of opposite pair of spot available
     '''
     def _neighbor_pair_(self, x, y):
         res = []
@@ -102,7 +105,7 @@ class board:
 
 
     '''
-        Return all of opposite pair of enenmy to be carried
+    Return all of opposite pair of enenmy to be carried
     '''
     def _carry_neighbor_pair_(self, x, y):
         res = []
@@ -137,7 +140,7 @@ class board:
         return ((sx, sy) in possible_starting_position) and (u == tx) and (v == ty)
 
     '''
-        Get opposite pairs of enenmy to be carried, flip into friendly unit
+    Get opposite pairs of enenmy to be carried, flip into friendly unit
     '''
     def _check_carry_(self, x, y):
         for ax, ay, bx, by in self._carry_neighbor_pair_(x, y):
@@ -156,7 +159,7 @@ class board:
                 self._DFS_(u, v)
 
     '''
-        Check all surrounded enemy node, flip all of surrounded inside enemy node
+    Check all surrounded enemy node, flip all of surrounded inside enemy node
     '''
     def _check_surround_(self):
         self.connected_component = [[0 for y in range(5)] for x in range(5)]
@@ -177,7 +180,7 @@ class board:
                     self.board[x][y] = 0 - self.board[x][y]
 
     '''
-        Check to validate move, then make change to the board, both moves then carry/surround
+    Check to validate move, then make change to the board, both moves then carry/surround
     '''
     def make_move(self, move):
         (sx, sy), (tx, ty) = move
