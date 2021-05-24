@@ -4,7 +4,7 @@ from random import choice
 
 INF = 10000
 START_MAX_DEPTH = 3
-END_MAX_DEPTH = 3
+END_MAX_DEPTH = 2
 
 dx = [-1, -1, 0, 1, 1, 1, 0, -1]
 dy = [0, 1, 1, 1, 0, -1, -1, -1]
@@ -241,7 +241,7 @@ def max_value(board, current_worst_max_possible, current_worst_min_possible, pla
     global counter
     if board.finished():
         return utility(board)
-    if counter < 25:
+    if current_worst_max_possible < 8:
         if depth == START_MAX_DEPTH:
             return evaluate(board)
     else:
@@ -268,7 +268,7 @@ def min_value(board, current_worst_max_possible, current_worst_min_possible, pla
     global counter
     if board.finished():
         return utility(board)
-    if counter % 3 == 0:
+    if current_worst_min_possible > -8:
         if depth == START_MAX_DEPTH:
             return evaluate(board)
     else:

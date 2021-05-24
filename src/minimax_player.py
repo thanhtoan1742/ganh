@@ -234,6 +234,8 @@ def minimax(board, move_list, player):
                 v = new_v
                 current_worst_min_possible = v
                 optimal_move = move
+
+    print(f"Maximum value: {v}")
     return optimal_move
 
 
@@ -241,7 +243,7 @@ def max_value(board, current_worst_max_possible, current_worst_min_possible, pla
     global counter
     if board.finished():
         return utility(board)
-    if counter < 25:
+    if current_worst_max_possible < 8:
         if depth == START_MAX_DEPTH:
             return evaluate(board)
     else:
@@ -268,7 +270,7 @@ def min_value(board, current_worst_max_possible, current_worst_min_possible, pla
     global counter
     if board.finished():
         return utility(board)
-    if counter % 3 == 0:
+    if current_worst_min_possible > -8:
         if depth == START_MAX_DEPTH:
             return evaluate(board)
     else:
