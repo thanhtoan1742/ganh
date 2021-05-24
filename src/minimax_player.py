@@ -4,7 +4,8 @@ from random import choice
 
 INF = 10000
 START_MAX_DEPTH = 3
-END_MAX_DEPTH = 3
+MID_MAX_DEPTH = 2
+END_MAX_DEPTH = 0
 
 dx = [-1, -1, 0, 1, 1, 1, 0, -1]
 dy = [0, 1, 1, 1, 0, -1, -1, -1]
@@ -99,7 +100,7 @@ def get_open_moves(board, player, last_move):
     if len(carry_neighbor_pair) == 0:
         return []
 
-    return [(u, v, x, y) for u, v in possible_starting_position]
+    return set([(u, v, x, y) for u, v in possible_starting_position])
 
 # Extract the opponent move from 2 consecutive board.
 # FIXME: wrong when there is carry or surround aka pieces changing side.
@@ -178,11 +179,11 @@ def get_all_possible_move(board, player, last_move):
     if len(pos) == 0:
         return
 
-    all_possible_moves = []
+    all_possible_moves = set()
 
     for x, y in pos:
         for u, v in get_cell_value_neighbor(board, 0, x, y):
-            all_possible_moves.append((x, y, u, v))
+            all_possible_moves.add((x, y, u, v))
     
     # print(all_possible_moves)
     return all_possible_moves
@@ -198,7 +199,7 @@ def utility(board):
         return 0
 
 
-def minimax(board, move_list, player):
+def minimax(board, move_list, player, tree_depth):
     global counter
     counter += 1
     # print(f"Counter: {counter}")
@@ -218,7 +219,7 @@ def minimax(board, move_list, player):
             new_board = copy.deepcopy(board)
             x1, y1, x2, y2 = move
             new_board.make_move(((x1,y1),( x2,y2)))
-            new_v = min_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, 0)
+            new_v = min_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, 0, tree_depth)
             if new_v > v:
                 v = new_v
                 current_worst_max_possible = v
@@ -229,26 +230,22 @@ def minimax(board, move_list, player):
             new_board = copy.deepcopy(board)
             x1, y1, x2, y2 = move
             new_board.make_move(((x1,y1),( x2,y2)))
-            new_v = max_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, 0)
+            new_v = max_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, 0, tree_depth)
             if new_v < v:
                 v = new_v
                 current_worst_min_possible = v
                 optimal_move = move
 
-    print(f"Maximum value: {v}")
+    print(f"Minimax player optimal value: {v}")
     return optimal_move
 
 
-def max_value(board, current_worst_max_possible, current_worst_min_possible, player, depth):
+def max_value(board, current_worst_max_possible, current_worst_min_possible, player, depth, tree_depth):
     global counter
     if board.finished():
         return utility(board)
-    if current_worst_max_possible < 8:
-        if depth == START_MAX_DEPTH:
-            return evaluate(board)
-    else:
-        if depth == END_MAX_DEPTH:
-            return evaluate(board)
+    if depth == tree_depth:
+        return evaluate(board)
     v = -INF
     start, end = board.moves[-1]
     x1, y1 = start
@@ -258,7 +255,7 @@ def max_value(board, current_worst_max_possible, current_worst_min_possible, pla
         new_board = copy.deepcopy(board)
         x1, y1, x2, y2 = move
         new_board.make_move(((x1,y1),( x2,y2)))
-        new_v = min_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, depth + 1)
+        new_v = min_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, depth + 1, tree_depth)
         if new_v > current_worst_min_possible:
             return new_v
         v = max(v, new_v) 
@@ -266,16 +263,12 @@ def max_value(board, current_worst_max_possible, current_worst_min_possible, pla
     return v
 
 
-def min_value(board, current_worst_max_possible, current_worst_min_possible, player, depth):
+def min_value(board, current_worst_max_possible, current_worst_min_possible, player, depth, tree_depth):
     global counter
     if board.finished():
         return utility(board)
-    if current_worst_min_possible > -8:
-        if depth == START_MAX_DEPTH:
-            return evaluate(board)
-    else:
-        if depth == END_MAX_DEPTH:
-            return evaluate(board)
+    if depth == tree_depth:
+        return evaluate(board)
     v = INF
     start, end = board.moves[-1]
     x1, y1 = start
@@ -285,7 +278,7 @@ def min_value(board, current_worst_max_possible, current_worst_min_possible, pla
         new_board = copy.deepcopy(board)
         x1, y1, x2, y2 = move
         new_board.make_move(((x1,y1),( x2,y2)))
-        new_v = max_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, depth + 1)
+        new_v = max_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, depth + 1, tree_depth)
         if new_v < current_worst_max_possible:
             return new_v
         v = min(v, new_v)
@@ -317,7 +310,15 @@ def move(board_ndarray, player):
     board_class.board = board_ndarray
     board_class.current_player = player
 
-    optimal_move = minimax(board_class, all_moves, player)
+    if evaluate(board_class) * player < 12: 
+        # Opponent has more than 2 units left
+        optimal_move = minimax(board_class, all_moves, player, START_MAX_DEPTH)
+    elif evaluate(board_class) * player < 14: 
+        # Opponent has 2 units left
+        optimal_move = minimax(board_class, all_moves, player, MID_MAX_DEPTH)
+    else:   
+        # Opponent has one unit left
+        optimal_move = minimax(board_class, all_moves, player, END_MAX_DEPTH)
     x, y, u, v = optimal_move
     update_board_my_turn(board_ndarray, (x, y, u, v))
     return (x, y), (u, v)
