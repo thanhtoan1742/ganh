@@ -1,7 +1,7 @@
 from random import random
 from board import *
-from minimax_player_clone import move as random_move_maker_2
-from minimax_player import move as random_move_maker_1
+from minimax_player import move as random_move_maker_2
+from random_player import move as random_move_maker_1
 
 class game:
     def __init__(self, board=board(), first_move_maker=random_move_maker_1, second_move_maker=random_move_maker_2):

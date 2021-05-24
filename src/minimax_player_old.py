@@ -5,7 +5,7 @@ from random import choice
 INF = 10000
 START_MAX_DEPTH = 3
 MID_MAX_DEPTH = 2
-END_MAX_DEPTH = 0
+END_MAX_DEPTH = 1
 
 dx = [-1, -1, 0, 1, 1, 1, 0, -1]
 dy = [0, 1, 1, 1, 0, -1, -1, -1]
@@ -257,6 +257,7 @@ def max_value(board, current_worst_max_possible, current_worst_min_possible, pla
         new_board.make_move(((x1,y1),( x2,y2)))
         new_v = min_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, depth + 1, tree_depth)
         if new_v > current_worst_min_possible:
+            # print(f"Break Old : {new_v} {current_worst_min_possible}")
             return new_v
         v = max(v, new_v) 
         current_worst_max_possible = v
@@ -280,6 +281,7 @@ def min_value(board, current_worst_max_possible, current_worst_min_possible, pla
         new_board.make_move(((x1,y1),( x2,y2)))
         new_v = max_value(new_board, current_worst_max_possible, current_worst_min_possible, 0 - player, depth + 1, tree_depth)
         if new_v < current_worst_max_possible:
+            # print(f"Break Old : {current_worst_max_possible} {new_v}")
             return new_v
         v = min(v, new_v)
         current_worst_min_possible = v
