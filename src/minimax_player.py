@@ -2,7 +2,7 @@ import numpy as np, copy
 from board import *
 from random import choice
 
-INF = 100000
+INF = 10000
 START_MAX_DEPTH = 3
 END_MAX_DEPTH = 3
 
@@ -268,7 +268,7 @@ def min_value(board, current_worst_max_possible, current_worst_min_possible, pla
     global counter
     if board.finished():
         return utility(board)
-    if counter < 25:
+    if counter % 3 == 0:
         if depth == START_MAX_DEPTH:
             return evaluate(board)
     else:
@@ -301,7 +301,7 @@ def evaluate(board):
 
 
 def move(board_ndarray, player):
-    global last_board
+    global last_board, counter
     board_ndarray = np.array(board_ndarray)
     update_board_opponent_turn(board_ndarray)
 
