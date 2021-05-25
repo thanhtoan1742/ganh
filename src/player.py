@@ -28,7 +28,7 @@ class player:
     """
     Return open move list if there is one, otherwise return None.
     """
-    def get_open_moves(self):
+    def _get_open_moves_(self):
         if len(self.moves) == 0:
             return []
 

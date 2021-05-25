@@ -5,7 +5,7 @@ import board_tools as bt
 class random_player(player):
     def _get_move_(self):
         # If open moves exist, randomly chose 1 play it.
-        open_moves = self.get_open_moves()
+        open_moves = self._get_open_moves_()
         if len(open_moves) > 0:
             op = choice(open_moves)
             return (op[0], op[1], op[2], op[3])

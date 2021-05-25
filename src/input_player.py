@@ -2,7 +2,7 @@ from player import player
 
 class input_player(player):
     def _get_move_(self):
-        open_moves = self.get_open_moves()
+        open_moves = self._get_open_moves_()
         print('open moves are:')
         print(open_moves)
 

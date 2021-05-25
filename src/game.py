@@ -26,4 +26,4 @@ class game:
 
         winner = self.board.get_winner()
         c_winner = 'X' if winner == 1 else 'O'
-        print(f'{c_winner}({winner}) won!!!')
+        print(f'{c_winner} won!!!')

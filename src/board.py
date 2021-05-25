@@ -4,10 +4,10 @@ from board_tools import eprint
 
 
 class board:
-    def __init__(self, board=bt.get_initial_board(), current_player=1):
+    def __init__(self, board=bt.get_initial_board(), current_player=1, moves=[]):
         self.board = board
         self.current_player = current_player
-        self.moves = []
+        self.moves = moves
 
 
     def __str__(self):
