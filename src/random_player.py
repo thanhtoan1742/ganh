@@ -4,24 +4,10 @@ import board_tools as bt
 
 class random_player(player):
     def _get_move_(self):
-        # If open moves exist, randomly chose 1 play it.
-        open_moves = self._get_open_moves_()
-        if len(open_moves) > 0:
-            op = choice(open_moves)
-            return (op[0], op[1], op[2], op[3])
-
-        # Randomly chose a starting position then randomly chose a destination.
-        pos = [
-            e
-            for e in bt.get_position_with_value(self.board, self.player)
-            if len(bt.get_neighbor_with_value(self.board, e[0], e[1], 0)) > 0
-        ]
-        if len(pos) == 0:
-            raise Exception("pos is not supposed to be empty")
-        x, y = choice(pos)
-        u, v = choice(bt.get_neighbor_with_value(self.board, x, y, 0))
-        return (x, y, u, v)
-
+        moves = self._get_possible_moves_()
+        if len(moves) == 0:
+            raise Exception('No available move')
+        return choice(moves)
 
 p = random_player()
 def move(board, player):

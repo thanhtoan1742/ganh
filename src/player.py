@@ -95,6 +95,22 @@ class player:
     Each concrete player class implements this method.
     Return (x, y, u, v) as the move.
     """
+
+    def _get_possible_moves_(self):
+        # If open moves exist, randomly chose 1 play it.
+        open_moves = self._get_open_moves_()
+        if len(open_moves) > 0:
+            return open_moves
+
+        # Randomly chose a starting position then randomly chose a destination.
+        moves = [
+            (x, y, u, v)
+            for x, y, in bt.get_position_with_value(self.board, self.player)
+            for u, v in bt.get_neighbor_with_value(self.board, x, y, 0)
+        ]
+        return moves
+
+
     def _get_move_(self):
         raise NotImplementedError
 
