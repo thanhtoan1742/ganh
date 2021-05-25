@@ -102,7 +102,6 @@ def get_open_moves(board, player, last_move):
     return set([(u, v, x, y) for u, v in possible_starting_position])
 
 # Extract the opponent move from 2 consecutive board.
-# FIXME: wrong when there is carry or surround aka pieces changing side.
 def extract_opponent_move(last_board, board):
     pos = [
         (x, y) 

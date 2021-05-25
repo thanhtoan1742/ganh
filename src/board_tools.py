@@ -54,7 +54,7 @@ def get_symmetric_neighbor_pair(x, y):
 
 """
 Return all pair of carry neighbors of (x, y) that both cell 
-has the value of cell_value.
+has the value = value arguement.
 """
 def get_symmetric_neighbor_pair_with_value(board, x, y, value):
     res = []
@@ -69,7 +69,7 @@ def get_symmetric_neighbor_pair_with_value(board, x, y, value):
 
 """
 Return all position that is neighbor of (x, y) and have the same
-value of cell_value
+value = value arguement.
 """
 def get_neighbor_with_value(board, x, y, value):
     res = []
@@ -80,7 +80,7 @@ def get_neighbor_with_value(board, x, y, value):
 
 
 """
-Return all position of a player.
+Return all position of a with value = value argument.
 """
 def get_position_with_value(board, value):
     pos = []
@@ -91,6 +91,11 @@ def get_position_with_value(board, value):
             
             pos.append((x, y))
     return pos
+
+    
+def get_score(board):
+    return sum(board.flatten())
+
 
 
 def _DFS_(board, x, y, mask, ncc):
@@ -110,8 +115,51 @@ def get_connected_component_mask(board):
                 _DFS_(board, x, y, mask, ncc)
 
     return mask
-    
 
+
+'''
+Flip all cells with value = value argument which are surrounded by 
+cells with vale = 0 - value argument.
+'''
+def _update_surround_(board, value):
+    mask = get_connected_component_mask(board)
+    ncc = max(mask.flatten()) + 1
+
+    is_reachable_empties = np.zeros(ncc, dtype=bool)
+    for x in range(N_ROW):
+        for y in range(N_COL):
+            if len(get_neighbor_with_value(board, x, y, 0)) > 0:
+                is_reachable_empties[mask[x][y]] = 1
+
+    for x in range(N_ROW):
+        for y in range(N_COL):
+            if board[x][y] != value:
+                continue
+
+            if not is_reachable_empties[mask[x][y]]:
+                board[x][y] = 0 - value
+
+
+'''
+Get opposite pairs of opponent's pieces to be carried, flip into friendly pieces.
+'''
+def _update_carry_(board, x, y):
+    for ax, ay, bx, by in get_symmetric_neighbor_pair_with_value(board, x, y, 0 - board[x][y]):
+        board[ax][ay] = board[x][y]
+        board[bx][by] = board[x][y]
+
+
+'''
+Apply a valid move to the board.
+'''
+def apply_move(board, move):
+    sx, sy, tx, ty = move
+
+    board[tx][ty] = board[sx][sy]
+    board[sx][sy] = 0
+    
+    _update_carry_(board, tx, ty)
+    _update_surround_(board, 0 - board[tx][ty])
 
 
 def get_initial_board():

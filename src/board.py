@@ -5,9 +5,10 @@ from board_tools import eprint
 
 class board:
     def __init__(self, board=bt.get_initial_board(), current_player=1, moves=[]):
-        self.board = board
+        self.board = np.array(board)
         self.current_player = current_player
         self.moves = moves
+        self.scores = [bt.get_score(self.board)]
 
 
     def __str__(self):
@@ -38,51 +39,33 @@ class board:
         return self.get_winner() != 0
  
 
+    """
+    If there is no open move return True.
+    If there is any open move, return True if the move is
+    an open move.
+    """
     def _check_open_move_(self, sx, sy, tx, ty):
+        # no previous move
         if len(self.moves) == 0:
             return True
-        (u, v), (_, _) = self.moves[-1]
 
+        # previous move does not change score
+        change_in_score = self.scores[-1] - self.scores[-2]
+        if change_in_score != 0:
+            return True
+
+        (u, v), (_, _) = self.moves[-1]
+        # previous move does not create opportunity to carry
         if len(bt.get_symmetric_neighbor_pair_with_value(self.board, u, v, 0 - self.current_player)) == 0:
             return True
 
+        # no starting position for an open move
         possible_starting_positions = bt.get_neighbor_with_value(self.board, u, v, self.current_player)
         if len(possible_starting_positions) == 0:
             return True
 
+        # check if current move is an open move or not
         return ((sx, sy) in possible_starting_positions) and (u == tx) and (v == ty)
-
-
-    '''
-    Get opposite pairs of opponent's pieces to be carried, flip into friendly pieces.
-    '''
-    def _update_carry_(self, x, y):
-        for ax, ay, bx, by in bt.get_symmetric_neighbor_pair_with_value(self.board, x, y, 0 - self.current_player):
-            self.board[ax][ay] = self.board[x][y]
-            self.board[bx][by] = self.board[x][y]
-
-
-
-    '''
-    Check all surrounded oppoent's node, flip all of surrounded inside enemy node
-    '''
-    def _update_surround_(self):
-        mask = bt.get_connected_component_mask(self.board)
-        ncc = max(mask.flatten()) + 1
-
-        is_reachable_empties = np.zeros(ncc, dtype=bool)
-        for x in range(bt.N_ROW):
-            for y in range(bt.N_COL):
-                if len(bt.get_neighbor_with_value(self.board, x, y, 0)) > 0:
-                    is_reachable_empties[mask[x][y]] = 1
-
-        for x in range(bt.N_ROW):
-            for y in range(bt.N_COL):
-                if self.board[x][y] != 0 - self.current_player:
-                    continue
-
-                if not is_reachable_empties[mask[x][y]]:
-                    self.board[x][y] = self.current_player
 
 
     '''
@@ -101,11 +84,8 @@ class board:
         if not self._check_open_move_(sx, sy, tx, ty):
             raise Exception('player has to play open move')
 
-        self.board[sx][sy] = 0
-        self.board[tx][ty] = self.current_player
+        bt.apply_move(self.board, (sx, sy, tx, ty))
         self.moves.append(move)
-
-        self._update_carry_(tx, ty)
-        self._update_surround_()
+        self.scores.append(bt.get_score(self.board))
 
         self.current_player = 0 - self.current_player
