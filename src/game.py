@@ -30,7 +30,8 @@ class game:
 
 
             c_player = 'X' if self.board.get_current_player() == 1 else 'O'
-            print(f"Player {c_player} moves from ({move[0][0]}, {move[0][1]}) to ({move[1][0]}, {move[1][1]})")
+            if verbose > 0:
+                print(f"Player {c_player} moves from ({move[0][0]}, {move[0][1]}) to ({move[1][0]}, {move[1][1]})")
             self.board.make_move(move)
 
             current_move_maker, next_move_maker = next_move_maker, current_move_maker

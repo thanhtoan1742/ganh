@@ -53,7 +53,6 @@ class player:
             return []
 
         change_in_score = self.scores[-1] - self.scores[-2]
-        print(f's1 = {self.scores[-1]}, s2 = {self.scores[-2]}')
         if change_in_score != 0:
             return []
 
@@ -75,8 +74,6 @@ class player:
     def _get_possible_moves_(self):
         # If open moves exist, randomly chose 1 play it.
         open_moves = self._get_open_moves_()
-        print('open moves: ')
-        print(open_moves)
         if len(open_moves) > 0:
             return open_moves
 
