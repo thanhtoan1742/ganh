@@ -9,9 +9,11 @@ class random_player(player):
             raise Exception('No available move')
         return choice(moves)
 
+
 p = random_player()
 def move(board, player):
     return p.move(board, player)
+
 
 p_2 = random_player()
 def move_2(board, player):

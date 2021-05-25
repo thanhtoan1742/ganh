@@ -4,6 +4,8 @@ from random_player import move as random_move_maker_1
 from random_player import move_2 as random_move_maker_2
 
 class game:
+    TIME_LIMIT = 3
+
     def __init__(self, board=board(), first_move_maker=random_move_maker_1, second_move_maker=random_move_maker_2):
         self.board = board
         self.first_move_maker = first_move_maker
@@ -25,7 +27,7 @@ class game:
             duration = time.perf_counter() - begin_time
             if verbose > 0:
                 print('time: %.4f' % duration)
-            if duration > 3 and limit_time:
+            if duration > self.TIME_LIMIT and limit_time:
                 raise Exception('time limit exceeded, your time is %4f' % duration)
 
 
@@ -37,5 +39,5 @@ class game:
             current_move_maker, next_move_maker = next_move_maker, current_move_maker
 
         winner = self.board.get_winner()
-        c_winner = 'X' if winner == 1 else 'O'
+        c_winner = 'X (first player)' if winner == 1 else 'O (second player)'
         print(f'{c_winner} won!!!')

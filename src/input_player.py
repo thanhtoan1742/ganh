@@ -10,9 +10,6 @@ class input_player(player):
         return x, y, u, v
 
         
-
-
-
 p = input_player()
 def move(board, player):
     return p.move(board, player)
