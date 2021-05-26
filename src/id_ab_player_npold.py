@@ -5,7 +5,7 @@ import numpy as np
 POS_INFTY = 1000
 NEG_INFTY = -1000
 
-def time_remained(secs = 2.9):
+def time_remained(secs = 2.7):
     """ Closure: check remaining time """
     start = time.time()
     def check():
@@ -14,15 +14,8 @@ def time_remained(secs = 2.9):
 
 def list_changed(input, x, y, value):
     """ Return a new list of list with input[x][y] = value """
-    # print(value)
-    # print((x, y))
-    # print(input)
     row = input[x].tolist()
-    # temp_row = row[y + 1:]
     row = row[:y] + [value] + row[y + 1:]
-    # # if len(temp_row) > 0:
-    # row = row + temp_row
-    # print(row)
     output = input[:x].tolist() + [row] + input[x + 1:].tolist()
     return np.array(output)
 
@@ -202,6 +195,8 @@ def iterdeep_minimax(root: Node, resource, fixed_depth = None):
         while resource() and depth <= 4:
             val = minimax_ab_cutoff(root, True, NEG_INFTY, POS_INFTY, depth, resource)
             depth += 1
+            if not resource():
+                break
             best_child = root.children[0]
             for child in root.children:
                 if 0 - best_child.value < 0 - child.value:
