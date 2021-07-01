@@ -190,7 +190,7 @@ def minimax_ab_cutoff(root: Node, maxplayer, alpha, beta, depth, resource):
 def iterdeep_minimax(root: Node, resource, fixed_depth = None):
     if fixed_depth is None:
         depth = 2
-        while resource() and depth <= 4:
+        while resource():
             val = minimax_ab_cutoff(root, True, NEG_INFTY, POS_INFTY, depth, resource)
             depth += 1
             if not resource():
@@ -237,39 +237,39 @@ def get_previous_move(pre_board, now_board):
         return sum
     return (start, end), sum_list(pre_board) == sum_list(now_board)
 
-def move(board, player):
+def move(board, player, remain_time):
     global game_board
     previous_move, force_carry = get_previous_move(game_board, board)
-    resource_remained = time_remained()
+    resource_remained = time_remained(min(remain_time * 0.9, 2.7))
     root = Node(board = board, player = player, previous_move = previous_move, force_carry = force_carry)
     game_board, get_move = iterdeep_minimax(root = root, resource = resource_remained)
     return get_move
 
-if __name__ == "__main__":
-    # node = Node(
-    #     list([
-    #         [ 1,  0,  1,  0,  0],
-    #         [ 1, -1,  1,  0,  0],
-    #         [-1, -1,  1,  0, -1],
-    #         [-1, -1,  0,  1, -1],
-    #         [-1,  1,  1,  0,  0]
-    #     ]), -1, previous_move = ((3,2),(2,2)), force_carry=True
-    # )
-    # resource = time_remained()
-    # pre = time.time()
-    # # val = minimax_ab_cutoff(node, True, NEG_INFTY, POS_INFTY, 3, resource)
-    # val = iterdeep_minimax(node, resource)
-    # print(time.time() - pre)
-    # # for child in node.children:
-    # #     if child.value + val == 0:
-    # #         print(child.previous_move)
-    # print(val)
-    board = [[ 0,  1,  1,  1,  1],
-            [ 1,  1,  0,  0,  1],
-            [ 1,  0,  0,  0, -1],
-            [-1,  0,  0,  0, -1],
-            [-1, -1, -1, -1, -1]]
-    player = -1
-    print(move(board = board, player = player))
+# if __name__ == "__main__":
+#     # node = Node(
+#     #     list([
+#     #         [ 1,  0,  1,  0,  0],
+#     #         [ 1, -1,  1,  0,  0],
+#     #         [-1, -1,  1,  0, -1],
+#     #         [-1, -1,  0,  1, -1],
+#     #         [-1,  1,  1,  0,  0]
+#     #     ]), -1, previous_move = ((3,2),(2,2)), force_carry=True
+#     # )
+#     # resource = time_remained()
+#     # pre = time.time()
+#     # # val = minimax_ab_cutoff(node, True, NEG_INFTY, POS_INFTY, 3, resource)
+#     # val = iterdeep_minimax(node, resource)
+#     # print(time.time() - pre)
+#     # # for child in node.children:
+#     # #     if child.value + val == 0:
+#     # #         print(child.previous_move)
+#     # print(val)
+#     board = [[ 0,  1,  1,  1,  1],
+#             [ 1,  1,  0,  0,  1],
+#             [ 1,  0,  0,  0, -1],
+#             [-1,  0,  0,  0, -1],
+#             [-1, -1, -1, -1, -1]]
+#     player = -1
+#     print(move(board = board, player = player))
 
         
